@@ -1,12 +1,16 @@
 // Core
 import React, { Component } from 'react';
+// import { createPortal } from 'react-dom';
 
 // Instruments
 import Styles from './styles.m.css';
 
-export default class Spinner extends Component {
-    render () {
+// const portal = document.getElementById('spinner');
 
-        return <div className = { Styles.spinner } />;
+export default class Spinner extends Component {
+    render() {
+        const { isSpinning } = this.props;
+
+        return isSpinning ? <div className = { Styles.spinner } /> : null;
     }
 }
