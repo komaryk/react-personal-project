@@ -11,22 +11,12 @@ import Edit from 'theme/assets/Edit';
 import Remove from 'theme/assets/Remove';
 
 export default class Task extends PureComponent {
-    constructor(props) {
-        super(props);
-
-        this.taskInput = React.createRef();
-
-        this.state = {
-            isTaskEditing: false,
-            newTaskMessage: this.props.message,
-        }
+    state = {
+        isTaskEditing: false,
+        newMessage: this.props.message,
     }
 
-    componentDidUpdate () {
-        if (this.state.isTaskEditing) {
-            this.taskInput.current.focus();
-        }
-    }
+    taskInput = React.createRef();
 
     static propTypes = {
         id: string.isRequired,
@@ -54,16 +44,18 @@ export default class Task extends PureComponent {
     _setTaskEditingState = (state) => {
         this.setState({
             isTaskEditing: state
+        }, () => {
+            if (this.state.isTaskEditing) {
+                this.taskInput.current.focus();
+            }
         });
 
-        if (this.state.isTaskEditing) {
-            this.taskInput.current.focus();
-        }
+        
     }
 
     _updateNewTaskMessage = (event) => {
         this.setState({
-            newTaskMessage: event.target.value
+            newMessage: event.target.value
         });
     }
 
@@ -71,18 +63,18 @@ export default class Task extends PureComponent {
         this._setTaskEditingState(false);
 
         const { _updateTaskAsync, message } = this.props;
-        const { newTaskMessage } = this.state;
+        const { newMessage } = this.state;
 
-        if (newTaskMessage == message) {
+        if (newMessage == message) {
             return null;
         }
 
-        const taskShape = this._getTaskShape({message: newTaskMessage});
+        const taskShape = this._getTaskShape({message: newMessage});
         _updateTaskAsync(taskShape);
     }
 
     _updateTaskMessageOnClick = () => {
-        const { newTaskMessage, isTaskEditing } = this.state;
+        const { newMessage, isTaskEditing } = this.state;
 
         if (isTaskEditing) {
             this._updateTask();
@@ -95,7 +87,7 @@ export default class Task extends PureComponent {
 
     _cancelUpdatingTaskMessage = () => {
         this.setState({
-            newTaskMessage: this.props.message
+            newMessage: this.props.message
         });
 
         this._setTaskEditingState(false);
@@ -109,7 +101,7 @@ export default class Task extends PureComponent {
             this._cancelUpdatingTaskMessage();
         } else if (enterKey) {
 
-            if (!this.state.newTaskMessage) {
+            if (!this.state.newMessage) {
                 return null;
             }
 
@@ -144,7 +136,7 @@ export default class Task extends PureComponent {
             favorite
         } = this.props;
 
-        const { newTaskMessage, isTaskEditing } = this.state;
+        const { newMessage, isTaskEditing } = this.state;
 
 
         const taskStyle = cx(Styles.task, completed ? Styles.completed : null);
@@ -165,7 +157,7 @@ export default class Task extends PureComponent {
                         disabled = { !isTaskEditing }
                         maxLength = { 50 }
                         type = "text" 
-                        value = { newTaskMessage }
+                        value = { newMessage }
                         onChange = { this._updateNewTaskMessage }
                         onKeyDown = { this._updateTaskMessageOnKeyDown }
                     />
